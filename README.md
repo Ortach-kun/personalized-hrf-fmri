@@ -29,7 +29,7 @@ This project provides tools to:
 ## Project Structure
 
 ```
-personalized-hrf-fmri/
+fmri_project/
 ├── src/                        # Source code
 │   ├── models/                 # Model implementations
 │   │   ├── hrf_generator.py    # HRF generation algorithms
@@ -37,8 +37,7 @@ personalized-hrf-fmri/
 │   └── utils/                  # Utility functions
 ├── docs/                       # Documentation
 │   ├── presentations/          # Presentation materials
-│   │   ├── presentation.html   # Basic presentation
-│   │   └── presentation_marinazzo.html # Detailed presentation
+│   │   └── presentation.html   # Presentation on personalized HRF
 │   └── PROJECT_SUMMARY.md      # Project summary document
 ├── examples/                   # Examples and demos
 │   ├── demo.py                 # Basic demonstration
@@ -53,10 +52,10 @@ personalized-hrf-fmri/
 │   ├── parameter_estimation_demo_new.png # Estimation workflow
 │   └── regional_variability_demo_new.png # Regional variance demo
 ├── .gitignore                  # Git ignore file
-├── LICENSE                     # MIT License
+├── LICENSE                     # MIT License (MIT)
 ├── CONTRIBUTING.md             # Contribution guidelines
 ├── README.md                   # This file
-├── requirements.txt            # Dependencies
+├── requirements.txt            # Python dependencies
 └── setup.py                    # Package setup
 ```
 
@@ -74,7 +73,7 @@ personalized-hrf-fmri/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/personalized-hrf-fmri.git
+git clone https://github.com/demiregeortac/personalized-hrf-fmri.git
 cd personalized-hrf-fmri
 
 # Install the package
@@ -155,7 +154,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-* **Demir Ege Ortaç** - [GitHub Profile](https://github.com/yourusername)
+* **Demir Ege Ortaç** - [GitHub Profile](https://github.com/demiregeortac)
 
 ## Acknowledgments
 
