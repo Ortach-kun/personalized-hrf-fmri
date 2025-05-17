@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized HRF Modeling Project</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .slide {
+            width: 900px;
+            height: 650px;
+            margin: 0 auto 50px auto;
+            padding: 40px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        .title {
+            background-color: #2c3e50;
+            color: white;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .title h1 {
+            font-size: 42px;
+            margin-top: 180px;
+            color: white;
+            text-align: center;
+        }
+        h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+        .title h2 {
+            font-size: 28px;
+            color: #ecf0f1;
+            font-weight: 400;
+            text-align: center;
+        }
+        h3 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 15px;
+        }
+        p, li {
+            font-size: 22px;
+            line-height: 1.5;
+        }
+        .author {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+        .title .author {
+            color: #bdc3c7;
+        }
+        .two-col {
+            display: flex;
+            justify-content: space-between;
+        }
+        .col {
+            width: 48%;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+        .centered-img {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .centered-img img {
+            max-height: 400px;
+        }
+        .code {
+            font-family: monospace;
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 18px;
+        }
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .equation {
+            font-family: 'Cambria Math', serif;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 24px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            font-size: 14px;
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Title Slide -->
+<div class="slide title">
+    <h1>Personalized Hemodynamic Response Function Modeling for fMRI</h1>
+    <h2>Implementation of the Balloon-Windkessel Model with Region-Specific Parameters</h2>
+    <div class="author">Meeting with Dr. Daniele Marinazzo</div>
+</div>
+
+<!-- Introduction -->
+<div class="slide">
+    <h2>Project Overview</h2>
+    <p>A computational framework for modeling personalized hemodynamic response functions (HRFs) in fMRI analysis.</p>
+    <ul>
+        <li>Accounts for inter-subject and inter-regional HRF variability</li>
+        <li>Based on the biophysical Balloon-Windkessel model</li>
+        <li>Supports region-specific parameter estimation</li>
+        <li>Improves accuracy of neural activity inference from BOLD signals</li>
+    </ul>
+    <div class="centered-img">
+        <img src="regional_variability_demo_new.png" alt="Regional HRF Variability">
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Scientific Background -->
+<div class="slide">
+    <h2>Scientific Background</h2>
+    <div class="two-col">
+        <div class="col">
+            <h3>HRF Variability Problem</h3>
+            <ul>
+                <li>Standard fMRI analyses use a canonical HRF</li>
+                <li>However, HRF shape varies significantly:</li>
+                <li>Between brain regions</li>
+                <li>Between subjects</li>
+                <li>With age, pathology, medication</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>Impact on fMRI Analysis</h3>
+            <ul>
+                <li>Incorrect HRF models lead to:</li>
+                <li>Reduced statistical power</li>
+                <li>False negatives/positives</li>
+                <li>Inaccurate timing estimates</li>
+                <li>Distorted functional connectivity</li>
+            </ul>
+        </div>
+    </div>
+    <div class="centered-img">
+        <img src="hrf_parameter_comparison_new.png" alt="HRF Variations">
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Balloon-Windkessel Model -->
+<div class="slide">
+    <h2>The Balloon-Windkessel Model</h2>
+    <p>A biophysical model of neurovascular coupling that describes the transformation of neural activity to BOLD signal.</p>
+    
+    <h3>Model Components:</h3>
+    <ul>
+        <li>Neural activity → Vasodilatory signal (s)</li>
+        <li>Vasodilatory signal → Blood flow (f)</li>
+        <li>Blood flow → Blood volume (v)</li>
+        <li>Blood flow → Deoxyhemoglobin content (q)</li>
+        <li>Volume & deoxyhemoglobin → BOLD signal</li>
+    </ul>
+    
+    <div class="centered-img">
+        <img src="balloon_block_response.png" alt="Balloon Model Response">
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Mathematical Model -->
+<div class="slide">
+    <h2>Mathematical Formulation</h2>
+    
+    <p>The Balloon-Windkessel model is defined by four coupled differential equations:</p>
+    
+    <div class="equation">
+        ds/dt = x - s/τ<sub>s</sub> - (f-1)/τ<sub>f</sub>
+    </div>
+    <div class="equation">
+        df/dt = s
+    </div>
+    <div class="equation">
+        dv/dt = (f - v<sup>1/α</sup>)/τ<sub>0</sub>
+    </div>
+    <div class="equation">
+        dq/dt = [f(1-(1-E<sub>0</sub>)<sup>1/f</sup>)/E<sub>0</sub> - qv<sup>1/α-1</sup>]/τ<sub>0</sub>
+    </div>
+    
+    <p>The BOLD signal is calculated as:</p>
+    <div class="equation">
+        BOLD = V<sub>0</sub>[k<sub>1</sub>(1-q) + k<sub>2</sub>(1-q/v) + k<sub>3</sub>(1-v)]
+    </div>
+    
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Key Parameters -->
+<div class="slide">
+    <h2>Key Model Parameters</h2>
+    
+    <div class="two-col">
+        <div class="col">
+            <h3>Neuronal Coupling</h3>
+            <ul>
+                <li><span class="highlight">ε (epsilon)</span>: Neuronal efficacy</li>
+                <li><span class="highlight">τ<sub>s</sub></span>: Signal decay time constant</li>
+                <li><span class="highlight">τ<sub>f</sub></span>: Feedback regulation time</li>
+            </ul>
+            
+            <h3>Vascular Dynamics</h3>
+            <ul>
+                <li><span class="highlight">τ<sub>0</sub></span>: Transit time</li>
+                <li><span class="highlight">α (alpha)</span>: Grubb's exponent</li>
+            </ul>
+        </div>
+        
+        <div class="col">
+            <h3>Oxygen Extraction</h3>
+            <ul>
+                <li><span class="highlight">E<sub>0</sub></span>: Resting extraction fraction</li>
+                <li><span class="highlight">V<sub>0</sub></span>: Resting blood volume</li>
+            </ul>
+            
+            <h3>Regional Variability</h3>
+            <p>These parameters vary across:</p>
+            <ul>
+                <li>Brain regions</li>
+                <li>Age groups</li>
+                <li>Pathological conditions</li>
+                <li>Individuals</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Implementation -->
+<div class="slide">
+    <h2>Implementation Details</h2>
+    
+    <h3>Core Components</h3>
+    <ul>
+        <li><code>balloon_windkessel.py</code>: ODE system implementation</li>
+        <li><code>hrf_estimation.py</code>: Parameter estimation methods</li>
+        <li><code>visualization.py</code>: Plotting and visualization tools</li>
+        <li><code>tvb_integration.py</code>: Integration with The Virtual Brain</li>
+    </ul>
+    
+    <h3>Technical Features</h3>
+    <ul>
+        <li>Numerical ODE solver with adaptive step size</li>
+        <li>Stable solutions for physiologically plausible ranges</li>
+        <li>Parallelized parameter estimation</li>
+        <li>Produces realistic BOLD responses (1-5% signal change)</li>
+    </ul>
+    
+    <div class="centered-img">
+        <img src="basic_hrf_demo_new.png" alt="Basic HRF Model">
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Code Example -->
+<div class="slide">
+    <h2>Code Example</h2>
+    
+    <p>Using the Personalized HRF model:</p>
+    
+    <div class="code">
+# Create a personalized HRF model
+model = PersonalizedHRF(epsilon=0.8, tau_0=0.8, alpha=0.32, E_0=0.4)
+
+# Create region-specific parameters
+region_params = {
+    'Visual': {'tau_0': 0.65, 'alpha': 0.25, 'E_0': 0.3, 'epsilon': 1.0},
+    'Motor': {'tau_0': 0.9, 'alpha': 0.3, 'E_0': 0.35, 'epsilon': 0.9},
+    'PFC': {'tau_0': 1.1, 'alpha': 0.35, 'E_0': 0.28, 'epsilon': 0.8}
+}
+
+# Set region parameters
+for region, params in region_params.items():
+    model.set_region_params(region, **params)
+
+# Simulate region-specific response
+time, bold, states = model.simulate_region('Visual', stimulus, (0, 30), dt=0.1)
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Parameter Estimation -->
+<div class="slide">
+    <h2>Parameter Estimation</h2>
+    
+    <p>The framework includes multiple approaches for estimating HRF parameters:</p>
+    
+    <h3>Methods Implemented</h3>
+    <ul>
+        <li>Deconvolution-based estimation</li>
+        <li>Optimization with L-BFGS-B algorithm</li>
+        <li>Template matching with canonical HRF basis sets</li>
+        <li>Bayesian parameter estimation (planned)</li>
+    </ul>
+    
+    <div class="centered-img">
+        <img src="parameter_estimation_demo_new.png" alt="Parameter Estimation">
+    </div>
+    
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Results -->
+<div class="slide">
+    <h2>Key Results</h2>
+    
+    <div class="two-col">
+        <div class="col">
+            <h3>Model Validation</h3>
+            <ul>
+                <li>Reproduces canonical HRF shapes</li>
+                <li>Physiologically plausible amplitudes (1-5%)</li>
+                <li>Stable numerical solutions</li>
+                <li>Parameter estimation accuracy</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>Regional Differences</h3>
+            <ul>
+                <li>Visual cortex: faster response</li>
+                <li>Motor cortex: moderate amplitude</li>
+                <li>Prefrontal cortex: slower dynamics</li>
+                <li>Default mode: lowest amplitude</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="centered-img">
+        <img src="balloon_regional_variability.png" alt="Regional Variability">
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Applications -->
+<div class="slide">
+    <h2>Applications & Use Cases</h2>
+    
+    <div class="two-col">
+        <div class="col">
+            <h3>fMRI Analysis</h3>
+            <ul>
+                <li>Improved GLM analysis with personalized HRFs</li>
+                <li>More accurate functional connectivity</li>
+                <li>Better detection of event-related responses</li>
+                <li>Reduced false positives/negatives</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>Clinical Applications</h3>
+            <ul>
+                <li>Biomarkers for vascular pathology</li>
+                <li>Neurovascular coupling in aging</li>
+                <li>Medication effects on hemodynamics</li>
+                <li>Personalized fMRI analysis in patients</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>Neuroscientific Research</h3>
+    <ul>
+        <li>Region-specific neurovascular coupling</li>
+        <li>Integration with computational models (e.g., The Virtual Brain)</li>
+    </ul>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Technical Challenges -->
+<div class="slide">
+    <h2>Technical Challenges & Solutions</h2>
+    
+    <div class="two-col">
+        <div class="col">
+            <h3>Challenges</h3>
+            <ul>
+                <li>Numerical instabilities in ODE system</li>
+                <li>Extremely small signal magnitudes</li>
+                <li>Parameter identifiability issues</li>
+                <li>Computational efficiency</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>Solutions</h3>
+            <ul>
+                <li>Stabilized ODE solver with appropriate tolerances</li>
+                <li>Signal scaling to physiological ranges (1-5%)</li>
+                <li>Constrained parameter estimation</li>
+                <li>Optimized implementation</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>Key Improvements</h3>
+    <ul>
+        <li>Fixed BOLD signal equation to produce appropriate signal magnitudes</li>
+        <li>Improved numerical stability of the Balloon model equations</li>
+        <li>Enhanced parameter estimation accuracy</li>
+    </ul>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Future Directions -->
+<div class="slide">
+    <h2>Future Directions</h2>
+    
+    <h3>Planned Extensions</h3>
+    <ul>
+        <li>Integration with standard fMRI analysis pipelines (SPM, FSL)</li>
+        <li>Population-level HRF parameter database</li>
+        <li>Machine learning for rapid parameter estimation</li>
+        <li>Extended validation with empirical fMRI data</li>
+        <li>Web-based interactive HRF modeling tool</li>
+    </ul>
+    
+    <h3>Collaborations of Interest</h3>
+    <ul>
+        <li>The Virtual Brain Project integration</li>
+        <li>Clinical neuroscience applications</li>
+        <li>Aging and neurodegenerative disorders</li>
+        <li>Pharmacological fMRI studies</li>
+    </ul>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Conclusion -->
+<div class="slide">
+    <h2>Conclusion</h2>
+    
+    <h3>Key Contributions</h3>
+    <ul>
+        <li>Implemented and validated the Balloon-Windkessel model in Python</li>
+        <li>Developed a framework for personalized, region-specific HRF modeling</li>
+        <li>Created tools for parameter estimation from empirical data</li>
+        <li>Demonstrated significant regional variability effects</li>
+    </ul>
+    
+    <h3>Significance</h3>
+    <p>This project enables more accurate modeling of the relationship between neural activity and BOLD signals, potentially improving the precision and interpretability of fMRI studies.</p>
+    
+    <div class="centered-img">
+        <img src="synthetic_hrf_shapes.png" alt="HRF Shapes">
+    </div>
+    <div class="footer">Personalized HRF Project</div>
+</div>
+
+<!-- Thank You -->
+<div class="slide title">
+    <h1>Thank You</h1>
+    <h2>Questions & Discussion</h2>
+    <div class="author">Meeting with Dr. Daniele Marinazzo</div>
+</div>
+
+</body>
+</html>
