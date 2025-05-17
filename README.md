@@ -53,7 +53,6 @@ fmri_project/
 │   └── regional_variability_demo_new.png # Regional variance demo
 ├── .gitignore                  # Git ignore file
 ├── LICENSE                     # MIT License (MIT)
-├── CONTRIBUTING.md             # Contribution guidelines
 ├── README.md                   # This file
 ├── requirements.txt            # Python dependencies
 └── setup.py                    # Package setup
@@ -136,10 +135,6 @@ For a more detailed overview of the project, including technical details, implem
 ![Regional Variability](images/regional_variability_demo_new.png)
 
 The project includes various visualizations to demonstrate the impact of personalized HRF modeling on fMRI analysis.
-
-## Contributing
-
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
 
 ## References
 
