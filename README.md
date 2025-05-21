@@ -151,7 +151,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 * **Demir Ege Ortaç** - [GitHub Profile](https://github.com/demiregeortac)
 
-## Acknowledgments
+## Acknowledgements
 
 - Friston, K.J., et al. (2000). Nonlinear responses in fMRI: the Balloon model, Volterra kernels, and other hemodynamics. Neuroimage 12, 466-477.
 - Stephan, K.E., et al. (2007). Comparing hemodynamic models with DCM. Neuroimage 38, 387-401.
